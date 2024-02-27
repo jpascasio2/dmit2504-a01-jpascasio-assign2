@@ -36,39 +36,37 @@ class MyFirstPageState extends State<MyFirstPage> {
             children: <Widget>[
               const Text('Enable Buttons'),
               Switch(
-                value: enabled,
-                onChanged: (bool onChangedValue) {
-                  print ('onChangedValue is $onChangedValue');
-                  enabled = onChangedValue;
-                  setState(() {
-                    if (enabled && timesClicked == 0) {
-                      msg1 = 'Click Me';
-                      print('enabled is true');
-                    } else {
-                      msg1 = 'Clicked $timesClicked';
-                      print('enabled is false');
-                    }
-                  });
-                }
-              )
+                  value: enabled,
+                  onChanged: (bool onChangedValue) {
+                    print('onChangedValue is $onChangedValue');
+                    enabled = onChangedValue;
+                    setState(() {
+                      if (enabled && timesClicked == 0) {
+                        msg1 = 'Click Me';
+                        print('enabled is true');
+                      } else {
+                        msg1 = 'Clicked $timesClicked';
+                        print('enabled is false');
+                      }
+                    });
+                  })
             ],
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               Visibility(
-                visible: enabled,
-                child: ElevatedButton(
-                  onPressed: () {
-                    setState(() {
-                      timesClicked++;
-                      msg1 = 'Clicked $timesClicked';
-                      print('clicked $timesClicked');
-                    });
-                  },
-                  child: Text(msg1),
-                )
-              ),
+                  visible: enabled,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      setState(() {
+                        timesClicked++;
+                        msg1 = 'Clicked $timesClicked';
+                        print('clicked $timesClicked');
+                      });
+                    },
+                    child: Text(msg1),
+                  )),
               Visibility(
                 visible: enabled,
                 child: ElevatedButton(
@@ -78,7 +76,7 @@ class MyFirstPageState extends State<MyFirstPage> {
                       msg1 = 'Click Me';
                     });
                   },
-                  child: Text(msg2),
+                  child: Text('Reset'),
                 ),
               ),
             ],
@@ -92,15 +90,41 @@ class MyFirstPageState extends State<MyFirstPage> {
               padding: const EdgeInsets.all(8.0),
               child: Column(
                 children: [
-                  //TODO: Build the text form field
-                  // here as the first
-                  // child of the column.
-                  // Include as the second child
-                  // of the column
-                  // a submit button that will show a
-                  // snackbar with the "firstName"
-                  // if validation is satisfied.
-                  
+                  TextFormField(
+                    controller: textEditingController,
+                    decoration: InputDecoration(
+                        icon: Icon(Icons.person_2),
+                        hintText: "first name",
+                        helperText: "min 1, max 10",
+                        suffixIcon: Icon(Icons.check_circle)),
+                    maxLength: 10,
+                    validator: (value) {
+                      return value!.isEmpty ? "Must provide a name" : null;
+                    },
+                    onSaved: (value) {
+                      msg1 = value!;
+                    },
+                  ),
+                  SizedBox(),
+                  ElevatedButton(
+                    onPressed: () {
+                      if (formKey.currentState!.validate()) {
+                        formKey.currentState!.save();
+                        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                          content: Text('Hey There! Your name is $msg1'),
+                          action: SnackBarAction(
+                            label: 'Close',
+                            onPressed: () {
+                              ScaffoldMessenger.of(context)
+                                .hideCurrentSnackBar();
+                            },
+                            textColor: Theme.of(context).dialogBackgroundColor
+                          ),
+                        ));
+                      }
+                    },
+                    child: Text("Submit")
+                  ),
                 ],
               ),
             ),
